@@ -1,0 +1,23 @@
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Android build intermediates
+android_app/bin/
+android_app/gen/
+android_app/res.zip
+android_app/unaligned.apk
+android_app/aligned.apk
+android_app/release.keystore
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store

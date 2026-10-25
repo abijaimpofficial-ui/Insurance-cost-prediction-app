@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Medical Insurance Cost Predictor</title>
+  <style>
+    :root {
+      --primary: #1976D2;
+      --primary-dark: #0D47A1;
+      --primary-light: #E3F2FD;
+      --surface: #FFFFFF;
+      --background: #F8F9FA;
+      --on-surface: #202124;
+      --on-surface-variant: #5F6368;
+      --outline: #DADCE0;
+      --success: #2E7D32;
+      --success-light: #E8F5E9;
+      --warning: #EF6C00;
+      --warning-light: #FFF3E0;
+      --danger: #C62828;
+      --danger-light: #FFEBEE;
+      --card-radius: 16px;
+      --input-radius: 12px;
+      --elevation-1: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.12);
+      --elevation-2: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--background);
+      color: var(--on-surface);
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+
+    .app-header {
+      background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+      color: white;
+      padding: 24px 20px 20px;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.25);
+    }
+
+    .app-header h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .app-header p {
+      font-size: 0.88rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--card-radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--elevation-1);
+      border: 1px solid var(--outline);
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .value-badge {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 2px 10px;
+      border-radius: 12px;
+    }
+
+    /* Range slider */
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #E0E0E0;
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+      border: 2px solid white;
+    }
+
+    /* Inputs & Selects */
+    input[type=number], select {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 1.5px solid var(--outline);
+      border-radius: var(--input-radius);
+      background: white;
+      color: var(--on-surface);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type=number]:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+    }
+
+    /* Segmented Controls (Radio group) */
+    .segmented-control {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      background: #EEEEEE;
+      padding: 3px;
+      border-radius: var(--input-radius);
+      gap: 3px;
+    }
+
+    .segmented-control.cols-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .segmented-item {
+      position: relative;
+    }
+
+    .segmented-item input[type=radio] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .segmented-label {
+      display: block;
+      text-align: center;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: capitalize;
+    }
+
+    .segmented-item input[type=radio]:checked + .segmented-label {
+      background: white;
+      color: var(--primary);
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    .bmi-info {
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+      margin-top: 5px;
+    }
+
+    /* Button */
+    .btn-predict {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+      border: none;
+      border-radius: var(--input-radius);
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(25, 118, 210, 0.3);
+      transition: transform 0.1s, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-predict:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 5px rgba(25, 118, 210, 0.2);
+    }
+
+    /* Result Box */
+    .result-card {
+      display: none;
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 20px;
+      margin-top: 20px;
+      border: 2px solid #81C784;
+      box-shadow: var(--elevation-2);
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--success);
+      background: var(--success-light);
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    .result-title {
+      font-size: 0.9rem;
+      color: var(--on-surface-variant);
+    }
+
+    .result-amount {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #1B5E20;
+      margin: 4px 0 6px;
+    }
+
+    .result-monthly {
+      font-size: 0.95rem;
+      color: var(--on-surface-variant);
+      margin-bottom: 14px;
+    }
+
+    .breakdown-divider {
+      height: 1px;
+      background: #E0E0E0;
+      margin: 14px 0;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      margin-bottom: 6px;
+      color: var(--on-surface-variant);
+    }
+
+    .breakdown-row.total {
+      font-weight: 700;
+      color: var(--on-surface);
+      font-size: 0.95rem;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--outline);
+    }
+
+    .disclaimer {
+      font-size: 0.78rem;
+      color: #757575;
+      text-align: center;
+      margin-top: 12px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <h1>💰 Insurance Predictor</h1>
+    <p>Ridge / Lasso Regression Machine Learning Model</p>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-title">👤 Personal Details</div>
+
+      <!-- Age -->
+      <div class="form-group">
+        <div class="label-row">
+          <label for="ageInput">Age</label>
+          <span class="value-badge" id="ageVal">35</span>
+        </div>
+        <input type="range" id="ageInput" min="18" max="64" value="35" oninput="updateAge(this.value)">
+      </div>
+
+      <!-- Sex -->
+      <div class="form-group">
+        <div class="label-row"><label>Sex</label></div>
+        <div class="segmented-control">
+          <div class="segmented-item">
+            <input type="radio" name="sex" id="sexFemale" value="female">
+            <label class="segmented-label" for="sexFemale">Female</label>
+          </div>
+          <div class="segmented-item">
+            <input type="radio" name="sex" id="sexMale" value="male" checked>
+            <label class="segmented-label" for="sexMale">Male</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- BMI -->
+      <div class="form-group">
+        <div class="label-row">
+          <label for="bmiInput">BMI (Body Mass Index)</label>
+          <span class="value-badge" id="bmiBadge">Normal</span>
+        </div>
+        <input type="number" id="bmiInput" min="15.0" max="55.0" step="0.1" value="27.0" oninput="updateBmi(this.value)">
+        <div class="bmi-info" id="bmiText">Normal: 18.5 – 24.9 | Overweight: 25.0 – 29.9 | Obese: 30.0+</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 Policy & Risk Factors</div>
+
+      <!-- Smoker -->
+      <div class="form-group">
+        <div class="label-row"><label>Smoker</label></div>
+        <div class="segmented-control">
+          <div class="segmented-item">
+            <input type="radio" name="smoker" id="smokerNo" value="no" checked>
+            <label class="segmented-label" for="smokerNo">No</label>
+          </div>
+          <div class="segmented-item">
+            <input type="radio" name="smoker" id="smokerYes" value="yes">
+            <label class="segmented-label" for="smokerYes">Yes</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Children -->
+      <div class="form-group">
+        <div class="label-row"><label for="childrenSelect">Number of Children</label></div>
+        <select id="childrenSelect">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+
+      <!-- Region -->
+      <div class="form-group">
+        <div class="label-row"><label for="regionSelect">Region</label></div>
+        <select id="regionSelect">
+          <option value="southwest" selected>Southwest</option>
+          <option value="southeast">Southeast</option>
+          <option value="northwest">Northwest</option>
+          <option value="northeast">Northeast</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Predict Button -->
+    <button type="button" class="btn-predict" onclick="doPrediction()">
+      <span>Predict Cost</span>
+    </button>
+
+    <!-- Prediction Result Card -->
+    <div class="result-card" id="resultCard">
+      <div class="result-badge" id="riskBadge">Optimal Rate</div>
+      <div class="result-title">Estimated yearly insurance charge:</div>
+      <div class="result-amount" id="chargeAmount">$0.00</div>
+      <div class="result-monthly" id="monthlyAmount">~$0.00 / month</div>
+
+      <div class="breakdown-divider"></div>
+      <div class="breakdown-row"><span>Baseline & Reserve</span><span id="fBase">$0.00</span></div>
+      <div class="breakdown-row"><span>Age Factor</span><span id="fAge">$0.00</span></div>
+      <div class="breakdown-row"><span>BMI Factor</span><span id="fBmi">$0.00</span></div>
+      <div class="breakdown-row"><span>Family Dependents</span><span id="fDep">$0.00</span></div>
+      <div class="breakdown-row"><span>Smoker & Lifestyle Surcharge</span><span id="fSmoke">$0.00</span></div>
+      <div class="breakdown-row"><span>Regional Variance</span><span id="fReg">$0.00</span></div>
+      <div class="breakdown-row total"><span>Total Annual Projection</span><span id="fTotal">$0.00</span></div>
+
+      <p class="disclaimer">Estimate from statistical Ridge/Lasso model — not a real insurance quote.</p>
+    </div>
+  </div>
+
+  <script>
+    function updateAge(val) {
+      document.getElementById('ageVal').textContent = val;
+    }
+
+    function updateBmi(val) {
+      var n = parseFloat(val);
+      var badge = document.getElementById('bmiBadge');
+      if (isNaN(n) || n < 18.5) {
+        badge.textContent = 'Underweight';
+        badge.style.background = '#E0F7FA';
+        badge.style.color = '#006064';
+      } else if (n < 25.0) {
+        badge.textContent = 'Normal';
+        badge.style.background = '#E8F5E9';
+        badge.style.color = '#2E7D32';
+      } else if (n < 30.0) {
+        badge.textContent = 'Overweight';
+        badge.style.background = '#FFF3E0';
+        badge.style.color = '#EF6C00';
+      } else {
+        badge.textContent = 'Obese';
+        badge.style.background = '#FFEBEE';
+        badge.style.color = '#C62828';
+      }
+    }
+
+    function getSelectedRadio(name) {
+      var els = document.getElementsByName(name);
+      for (var i = 0; i < els.length; i++) {
+        if (els[i].checked) return els[i].value;
+      }
+      return '';
+    }
+
+    function formatUSD(num) {
+      return '$' + Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Exact ML model parameters from trained scikit-learn Lasso pipeline
+    var ML_CONFIG = {
+      intercept: 14165.077267028533,
+      coef: [
+        2791.8726072681425, // age
+        310.39027331830977, // bmi
+        209.12033956677337, // children
+        6450.567814959236,  // smoker_bmi
+        837.5415076361654,  // age_sq
+        141.38803636269654, // sex_male
+        8730.037229284908,  // smoker_yes
+        375.14285221670997, // region_northwest
+        402.7849246556818,  // region_southeast
+        436.4935085544985   // region_southwest
+      ],
+      scaler_mean: [41.26635514018692, 30.483018691588786, 1.0728971962616822, 6.347327102803739, 1888.6906542056074],
+      scaler_scale: [13.63006190923491, 6.2156536448949185, 1.1777985240537394, 12.674702877879877, 1129.7094890009662]
+    };
+
+    function calculatePrediction(age, sex, bmi, children, smoker, region) {
+      var smokerBmi = (smoker === 'yes') ? bmi : 0.0;
+      var ageSq = age * age;
+
+      var ageStd = (age - ML_CONFIG.scaler_mean[0]) / ML_CONFIG.scaler_scale[0];
+      var bmiStd = (bmi - ML_CONFIG.scaler_mean[1]) / ML_CONFIG.scaler_scale[1];
+      var childStd = (children - ML_CONFIG.scaler_mean[2]) / ML_CONFIG.scaler_scale[2];
+      var smokerBmiStd = (smokerBmi - ML_CONFIG.scaler_mean[3]) / ML_CONFIG.scaler_scale[3];
+      var ageSqStd = (ageSq - ML_CONFIG.scaler_mean[4]) / ML_CONFIG.scaler_scale[4];
+
+      var sexMale = (sex === 'male') ? 1.0 : 0.0;
+      var smokerYes = (smoker === 'yes') ? 1.0 : 0.0;
+      var regNw = (region === 'northwest') ? 1.0 : 0.0;
+      var regSe = (region === 'southeast') ? 1.0 : 0.0;
+      var regSw = (region === 'southwest') ? 1.0 : 0.0;
+
+      var pred = ML_CONFIG.intercept +
+        (ML_CONFIG.coef[0] * ageStd) +
+        (ML_CONFIG.coef[1] * bmiStd) +
+        (ML_CONFIG.coef[2] * childStd) +
+        (ML_CONFIG.coef[3] * smokerBmiStd) +
+        (ML_CONFIG.coef[4] * ageSqStd) +
+        (ML_CONFIG.coef[5] * sexMale) +
+        (ML_CONFIG.coef[6] * smokerYes) +
+        (ML_CONFIG.coef[7] * regNw) +
+        (ML_CONFIG.coef[8] * regSe) +
+        (ML_CONFIG.coef[9] * regSw);
+
+      if (pred < 0) pred = 0;
+
+      return {
+        total: pred,
+        base: ML_CONFIG.intercept,
+        agePart: (ML_CONFIG.coef[0] * ageStd) + (ML_CONFIG.coef[4] * ageSqStd),
+        bmiPart: (ML_CONFIG.coef[1] * bmiStd),
+        childPart: (ML_CONFIG.coef[2] * childStd),
+        smokerPart: (ML_CONFIG.coef[3] * smokerBmiStd) + (ML_CONFIG.coef[6] * smokerYes),
+        regionPart: (ML_CONFIG.coef[7] * regNw) + (ML_CONFIG.coef[8] * regSe) + (ML_CONFIG.coef[9] * regSw)
+      };
+    }
+
+    function doPrediction() {
+      var age = parseInt(document.getElementById('ageInput').value, 10);
+      var sex = getSelectedRadio('sex');
+      var bmi = parseFloat(document.getElementById('bmiInput').value);
+      var children = parseInt(document.getElementById('childrenSelect').value, 10);
+      var smoker = getSelectedRadio('smoker');
+      var region = document.getElementById('regionSelect').value;
+
+      var res;
+      // If Android Java bridge is available, use native bridge calculation
+      if (window.AndroidBridge && typeof window.AndroidBridge.predict === 'function') {
+        try {
+          var rawJson = window.AndroidBridge.predict(age, sex, bmi, children, smoker, region);
+          res = JSON.parse(rawJson);
+        } catch(e) {
+          res = calculatePrediction(age, sex, bmi, children, smoker, region);
+        }
+      } else {
+        res = calculatePrediction(age, sex, bmi, children, smoker, region);
+      }
+
+      var card = document.getElementById('resultCard');
+      card.style.display = 'block';
+
+      document.getElementById('chargeAmount').textContent = formatUSD(res.total);
+      document.getElementById('monthlyAmount').textContent = '~' + formatUSD(res.total / 12) + ' / month';
+
+      document.getElementById('fBase').textContent = formatUSD(res.base);
+      document.getElementById('fAge').textContent = (res.agePart >= 0 ? '+' : '') + formatUSD(res.agePart);
+      document.getElementById('fBmi').textContent = (res.bmiPart >= 0 ? '+' : '') + formatUSD(res.bmiPart);
+      document.getElementById('fDep').textContent = (res.childPart >= 0 ? '+' : '') + formatUSD(res.childPart);
+      document.getElementById('fSmoke').textContent = (res.smokerPart >= 0 ? '+' : '') + formatUSD(res.smokerPart);
+      document.getElementById('fReg').textContent = (res.regionPart >= 0 ? '+' : '') + formatUSD(res.regionPart);
+      document.getElementById('fTotal').textContent = formatUSD(res.total);
+
+      var badge = document.getElementById('riskBadge');
+      if (res.total < 6000) {
+        badge.textContent = 'Preferred Low Risk';
+        badge.style.color = '#2E7D32';
+        badge.style.background = '#E8F5E9';
+      } else if (res.total < 15000) {
+        badge.textContent = 'Standard Risk Tier';
+        badge.style.color = '#0277BD';
+        badge.style.background = '#E1F5FE';
+      } else if (res.total < 30000) {
+        badge.textContent = 'Elevated Risk Tier';
+        badge.style.color = '#EF6C00';
+        badge.style.background = '#FFF3E0';
+      } else {
+        badge.textContent = 'High Actuarial Surcharge';
+        badge.style.color = '#C62828';
+        badge.style.background = '#FFEBEE';
+      }
+
+      card.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Initialize UI on load
+    updateBmi(27.0);
+  </script>
+</body>
+</html>

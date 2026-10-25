@@ -1,0 +1,11 @@
+,Linear Regression,Ridge,Lasso
+age,2775.43,2699.44,2791.87
+bmi,327.67,302.21,310.39
+children,210.21,212.97,209.12
+smoker_bmi,6311.08,6578.62,6450.57
+age_sq,855.43,930.5,837.54
+sex_male,155.9,155.63,141.39
+smoker_yes,9083.17,8402.56,8730.04
+region_northwest,429.92,419.25,375.14
+region_southeast,454.92,452.37,402.78
+region_southwest,489.88,485.2,436.49
